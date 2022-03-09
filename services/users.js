@@ -16,7 +16,7 @@ const list = (request, response) => {
     })
 }
 
-const add = (request, response) => {
+const add = async (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
         return response.status(400).json({errors: errors.array()});
@@ -32,13 +32,17 @@ const add = (request, response) => {
         name: body.name
     };
 
-    db.Users.create(data)
+    let user = await db.Users.create(data)
 
     delete data.password
 
     response.status(200).send({
         status: 'success',
-        data: data
+        data: {
+            id: user.id,
+            username: user.username,
+            name: user.name
+        }
     })
 }
 
