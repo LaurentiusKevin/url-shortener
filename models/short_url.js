@@ -1,7 +1,7 @@
 const {DataTypes} = require('sequelize')
 
-const Users = (sequelize) => {
-    const Users = sequelize.define('short_url', {
+const ShortUrls = (sequelize) => {
+    return sequelize.define('short_url', {
         name: {
             type: DataTypes.STRING(240),
         },
@@ -18,8 +18,6 @@ const Users = (sequelize) => {
             type: DataTypes.DATE,
         },
     })
-
-    return Users
 }
 
-module.exports = Users
+module.exports = ShortUrls
