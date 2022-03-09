@@ -1,4 +1,6 @@
-const Users = (sequelize, Sequelize, DataTypes) => {
+const {DataTypes} = require('sequelize')
+
+const Users = (sequelize) => {
     const Users = sequelize.define('users', {
         name: {
             type: DataTypes.STRING(240),
