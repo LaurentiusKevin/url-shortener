@@ -55,7 +55,7 @@ const edit = (request, response) => {
     if (query.password !== undefined) toUpdate.password = password.hash(query.password)
     if (query.name !== undefined) toUpdate.name = query.name
 
-    db.Users.update(toUpdate,{
+    db.Users.update(toUpdate, {
         where: {
             id: query.id
         }
@@ -68,9 +68,28 @@ const edit = (request, response) => {
     })
 }
 
-// todo: Delete Process for user
 const deleteData = (request, response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.status(400).json({errors: errors.array()});
+    }
 
+    let timestamp = moment.now()
+    let query = request.query
+
+    db.Users
+        .update({deletedAt: timestamp}, {
+            where: {
+                id: query.id
+            }
+        })
+        .then(data => {
+            response.status(200)
+                .send({
+                    status: 'success',
+                    data: data
+                })
+        })
 }
 
 // todo: Permanent Delete Process for user

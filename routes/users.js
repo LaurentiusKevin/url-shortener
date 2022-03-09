@@ -34,4 +34,8 @@ router.put('/',
         }).withMessage('username exists.'),
     userService.edit)
 
+router.delete('/',
+    query('id').not().isEmpty().withMessage('id required.'),
+    userService.deleteData)
+
 module.exports = router
