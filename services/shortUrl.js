@@ -7,18 +7,19 @@ class ShortUrl extends Model {
 }
 
 const list = (request, response) => {
-    let data = db.ShortUrl.findAll()
-
-    response.status(200).send({
-        status: 'success',
-        data: data
-    })
+    db.ShortUrl.findAll()
+        .then(data => {
+            response.status(200).send({
+                status: 'success',
+                data: data
+            })
+        })
 }
 
 const add = (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
-        return response.status(400).json({ errors: errors.array() });
+        return response.status(400).json({errors: errors.array()});
     }
 
     let timestamp = moment.now()
@@ -59,7 +60,29 @@ const add = (request, response) => {
 
 // todo: Edit process for ShortUrl
 const edit = (request, response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.status(400).json({errors: errors.array()});
+    }
 
+    let query = request.query
+
+    let toUpdate = {};
+    if (query.name !== undefined) toUpdate.name = query.name
+    if (query.short_url !== undefined) toUpdate.short_url = query.short_url
+    if (query.original_url !== undefined) toUpdate.original_url = query.original_url
+    if (query.expiredAt !== undefined) toUpdate.expiredAt = query.expiredAt
+
+    db.ShortUrl.update(toUpdate,{
+        where: {
+            id: query.id
+        }
+    }).then(data => {
+        response.status(200).send({
+            status: 'success',
+            data: toUpdate
+        })
+    })
 }
 
 // todo: Delete process for ShortUrl
@@ -73,7 +96,7 @@ const deleteData = (request, response) => {
  * @param response
  */
 const goToUrl = (request, response) => {
-    let shortUrl = request.originalUrl.replace('/s_','')
+    let shortUrl = request.originalUrl.replace('/s_', '')
 
     db.ShortUrl.findOne({
         where: {
