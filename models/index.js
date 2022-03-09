@@ -16,5 +16,6 @@ const sequelize = new Sequelize(config.db_name,config.user,config.password, {
 module.exports = {
     Sequelize: Sequelize,
     sequelize: sequelize,
-    Users: require('./users')(sequelize,Sequelize,DataTypes)
+    Users: require('./users')(sequelize),
+    ShortUrl: require('./short_url')(sequelize),
 }
