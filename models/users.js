@@ -1,7 +1,7 @@
 const {DataTypes} = require('sequelize')
 
 const Users = (sequelize) => {
-    const Users = sequelize.define('users', {
+    return sequelize.define('users', {
         name: {
             type: DataTypes.STRING(240),
         },
@@ -15,8 +15,6 @@ const Users = (sequelize) => {
             type: DataTypes.DATE,
         },
     })
-
-    return Users
 }
 
 module.exports = Users
