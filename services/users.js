@@ -93,8 +93,26 @@ const deleteData = (request, response) => {
 }
 
 // todo: Permanent Delete Process for user
-const deleteDataForce = (request, response) => {
+const deleteDataPermanent = (request, response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.status(400).json({errors: errors.array()});
+    }
 
+    let query = request.query
+
+    db.Users
+        .destroy({
+            where: {
+                id: query.id
+            }
+        })
+        .then(data => {
+            response.status(200).send({
+                status: 'success',
+                data: data
+            })
+        })
 }
 
 module.exports = {
@@ -102,5 +120,5 @@ module.exports = {
     add,
     edit,
     deleteData,
-    deleteDataForce
+    deleteDataPermanent
 }

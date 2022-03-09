@@ -38,4 +38,8 @@ router.delete('/',
     query('id').not().isEmpty().withMessage('id required.'),
     userService.deleteData)
 
+router.delete('/permanent',
+    query('id').not().isEmpty().withMessage('id required.'),
+    userService.deleteDataPermanent)
+
 module.exports = router
