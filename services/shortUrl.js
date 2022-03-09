@@ -1,5 +1,5 @@
 const db = require('../models')
-const {Model} = require('sequelize')
+const {Model, Op} = require('sequelize')
 const moment = require('moment')
 const {validationResult} = require("express-validator");
 
@@ -58,7 +58,6 @@ const add = (request, response) => {
     })
 }
 
-// todo: Edit process for ShortUrl
 const edit = (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
@@ -73,7 +72,7 @@ const edit = (request, response) => {
     if (query.original_url !== undefined) toUpdate.original_url = query.original_url
     if (query.expiredAt !== undefined) toUpdate.expiredAt = query.expiredAt
 
-    db.ShortUrl.update(toUpdate,{
+    db.ShortUrl.update(toUpdate, {
         where: {
             id: query.id
         }
@@ -85,9 +84,24 @@ const edit = (request, response) => {
     })
 }
 
-// todo: Delete process for ShortUrl
 const deleteData = (request, response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.status(400).json({errors: errors.array()});
+    }
 
+    let query = request.query
+
+    db.ShortUrl.update({deletedAt: moment.now()}, {
+        where: {
+            id: query.id
+        }
+    }).then(data => {
+        response.status(200).send({
+            status: 'success',
+            data: data
+        })
+    })
 }
 
 /**
@@ -98,9 +112,20 @@ const deleteData = (request, response) => {
 const goToUrl = (request, response) => {
     let shortUrl = request.originalUrl.replace('/s_', '')
 
+    let now = moment.now()
+
     db.ShortUrl.findOne({
         where: {
-            short_url: shortUrl
+            short_url: shortUrl,
+            deletedAt: null,
+            [Op.or]: [
+                {expiredAt: null},
+                {
+                    expiredAt: {
+                        [Op.gt]: now
+                    }
+                }
+            ]
         }
     }).then(data => {
         if (data === null) {
