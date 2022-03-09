@@ -51,14 +51,17 @@ const add = (request, response) => {
     })
 }
 
+// todo: Edit Process for user
 const edit = (request, response) => {
 
 }
 
+// todo: Delete Process for user
 const deleteData = (request, response) => {
 
 }
 
+// todo: Permanent Delete Process for user
 const deleteDataForce = (request, response) => {
 
 }
