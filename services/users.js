@@ -2,6 +2,7 @@ const db = require('../models')
 const {Model} = require("sequelize");
 const password = require('../utils/password')
 const moment = require('moment')
+const {validationResult} = require("express-validator");
 
 class Users extends Model {
 }
@@ -16,44 +17,55 @@ const list = (request, response) => {
 }
 
 const add = (request, response) => {
-    let timestamp = moment.now()
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.status(400).json({errors: errors.array()});
+    }
+
     let body = request.body
 
-    db.Users.findAll({
-        where: {
-            username: body.username
-        }
-    }).then(data => {
-        if (data.length > 0) {
-            response.status(200).send({
-                status: 'failed',
-                message: 'username has been used.',
-            })
-        } else {
-            let hashedPassword = password.hash(body.password)
+    let hashedPassword = password.hash(body.password)
 
-            let data = {
-                username: body.username,
-                password: hashedPassword,
-                name: body.name,
-                createdAt: timestamp,
-                updatedAt: timestamp,
-            };
+    let data = {
+        username: body.username,
+        password: hashedPassword,
+        name: body.name
+    };
 
-            db.Users.create(data)
+    db.Users.create(data)
 
-            delete data.password
-            response.status(200).send({
-                status: 'success',
-                data: data
-            })
-        }
+    delete data.password
+
+    response.status(200).send({
+        status: 'success',
+        data: data
     })
 }
 
-// todo: Edit Process for user
 const edit = (request, response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.status(400).json({errors: errors.array()});
+    }
 
+    let query = request.query
+
+    let toUpdate = {}
+    if (query.username !== undefined) toUpdate.username = query.username
+    if (query.password !== undefined) toUpdate.password = password.hash(query.password)
+    if (query.name !== undefined) toUpdate.name = query.name
+
+    db.Users.update(toUpdate,{
+        where: {
+            id: query.id
+        }
+    }).then(data => {
+        delete toUpdate.password
+        response.status(200).send({
+            status: 'success',
+            data: toUpdate
+        })
+    })
 }
 
 // todo: Delete Process for user

@@ -39,6 +39,7 @@ router.put('/',
             })
         }).withMessage('short_url not available'),
     ShortUrlService.edit)
+
 router.delete('/',
     query('id').not().isEmpty().withMessage('id required.'),
     ShortUrlService.deleteData)
