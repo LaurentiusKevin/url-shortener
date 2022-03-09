@@ -15,7 +15,6 @@ const list = (request, response) => {
     })
 }
 
-// todo: Add process for ShortUrl
 const add = (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
@@ -69,14 +68,11 @@ const deleteData = (request, response) => {
 }
 
 /**
- * todo: GoTo process for ShortUrl
  * flow: This part use the shortened url and then redirect to original url, or send message if deleted or expired
  * @param request
  * @param response
  */
 const goToUrl = (request, response) => {
-    // let body = request.body
-
     let shortUrl = request.originalUrl.replace('/s_','')
 
     db.ShortUrl.findOne({
