@@ -16,5 +16,6 @@ const check = (hashedString,plainString) => {
 
 module.exports = {
     hash,
-    check
+    check,
+    secret
 }
