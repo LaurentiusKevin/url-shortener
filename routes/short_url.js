@@ -18,7 +18,7 @@ router.post('/',
             } catch (e) {
                 url = false
             }
-            return url === true;
+            return url !== false;
         })
         .withMessage('original_url not a url, please using http or https followed by domain.'),
     ShortUrlService.add)
