@@ -2,13 +2,14 @@ const express = require('express')
 const router = express.Router()
 const {body, validationResult, query} = require('express-validator')
 const db = require('../models')
+const auth = require('../middleware/auth')
 
 const ShortUrlService = require('../services/shortUrl')
 
 /* GET short url listing. */
-router.get('/', ShortUrlService.list)
+router.get('/', auth, ShortUrlService.list)
 
-router.post('/',
+router.post('/', auth,
     body('name').not().isEmpty().withMessage('name required'),
     body('short_url').not().isEmpty().withMessage('short_url required'),
     body('original_url').not().isEmpty().withMessage('original_url required')
@@ -24,7 +25,7 @@ router.post('/',
         .withMessage('original_url not a url, please using http or https followed by domain.'),
     ShortUrlService.add)
 
-router.put('/',
+router.put('/', auth,
     query('id').not().isEmpty().withMessage('id required.'),
     query('short_url')
         .custom(value => {
@@ -40,7 +41,7 @@ router.put('/',
         }).withMessage('short_url not available'),
     ShortUrlService.edit)
 
-router.delete('/',
+router.delete('/', auth,
     query('id').not().isEmpty().withMessage('id required.'),
     ShortUrlService.deleteData)
 
