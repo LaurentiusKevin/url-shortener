@@ -30,7 +30,7 @@ const add = (request, response) => {
                 message: 'short_url not available'
             })
         } else {
-            let data = {
+            let createData = {
                 name: data.name,
                 short_url: data.short_url,
                 original_url: data.original_url,
@@ -38,7 +38,11 @@ const add = (request, response) => {
                 updatedAt: timestamp
             }
 
-            db.ShortUrl.create(data)
+            if (data.expired_at !== undefined) {
+                createData.expiredAt = data.expired_at
+            }
+
+            db.ShortUrl.create(createData)
 
             response.status(200).send({
                 status: 'success',
