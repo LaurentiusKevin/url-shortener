@@ -29,7 +29,7 @@ const add = (request, response) => {
         where: {
             short_url: body.short_url
         }
-    }).then(data => {
+    }).then(async data => {
         if (data.length > 0) {
             response.status(406).send({
                 status: 'failed',
@@ -48,11 +48,11 @@ const add = (request, response) => {
                 createData.expiredAt = body.expired_at
             }
 
-            db.ShortUrl.create(createData)
+            let createdData = await db.ShortUrl.create(createData)
 
             response.status(200).send({
                 status: 'success',
-                data: createData
+                data: createdData
             })
         }
     })
