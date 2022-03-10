@@ -31,7 +31,8 @@ router.put('/', auth,
         .custom(value => {
             return db.ShortUrl.findAll({
                 where: {
-                    short_url: value
+                    short_url: value,
+                    deletedAt: null
                 }
             }).then(data => {
                 if (data.length > 0) {

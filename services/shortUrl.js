@@ -27,7 +27,8 @@ const add = (request, response) => {
 
     db.ShortUrl.findAll({
         where: {
-            short_url: body.short_url
+            short_url: body.short_url,
+            deletedAt: null
         }
     }).then(async data => {
         if (data.length > 0) {
