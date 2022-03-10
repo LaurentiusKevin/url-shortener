@@ -9,7 +9,7 @@ const app = require('../app')
 const db = require('../models')
 
 chai.use(chaiHttp)
-describe('URL Shortener API', () => {
+describe('User CRUD Process', () => {
     it('should login POST, check status, check token, get user list GET, register user POST, edit user PUT, delete user DELETE, permanent delete user DELETE', done => {
         request(app)
             .post('/auth/login')
