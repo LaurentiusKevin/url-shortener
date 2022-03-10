@@ -38,7 +38,60 @@ describe('Short URL CRUD Process', () => {
                         response.body.should.have.property('data')
                         response.body.status.should.equal('success')
 
-                        done()
+
+                        request(app)
+                            .post('/short-url')
+                            .set('x-access-token',token)
+                            .send({
+                                name: 'trial',
+                                short_url: 'goo',
+                                original_url: 'https://google.com'
+                            })
+                            .end((error, response) => {
+                                response.should.have.status(200)
+                                response.should.be.json
+                                response.body.should.have.property('status')
+                                response.body.should.have.property('data')
+                                response.body.status.should.equal('success')
+                                response.body.data.should.have.property('id')
+
+                                let dataID = response.body.data.id
+
+                                request(app)
+                                    .put(`/short-url?id=${dataID}&name=trial&short_url=google&original_url=https://google.com`)
+                                    .set('x-access-token',token)
+                                    .end((error, response) => {
+                                        response.should.have.status(200)
+                                        response.should.be.json
+                                        response.body.should.have.property('status')
+                                        response.body.should.have.property('data')
+                                        response.body.status.should.equal('success')
+
+                                        request(app)
+                                            .delete(`/short-url?id=${dataID}`)
+                                            .set('x-access-token',token)
+                                            .end((error, response) => {
+                                                response.should.have.status(200)
+                                                response.should.be.json
+                                                response.body.should.have.property('status')
+                                                response.body.should.have.property('data')
+                                                response.body.status.should.equal('success')
+
+                                                request(app)
+                                                    .delete(`/s_google`)
+                                                    .end((error, response) => {
+                                                        response.should.have.status(200)
+                                                        response.should.be.json
+                                                        response.body.should.have.property('status')
+                                                        response.body.should.have.property('data')
+                                                        response.body.status.should.equal('success')
+                                                        response.should.redirect('https://google.com')
+
+                                                        done()
+                                                    })
+                                            })
+                                    })
+                            })
                     })
             })
     })
